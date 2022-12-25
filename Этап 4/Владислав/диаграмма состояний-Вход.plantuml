@@ -1,0 +1,28 @@
+@startuml
+state "Ввод данных" as state1
+state "Проверка данных на валидность" as state2
+state "Отправка данных" as state3
+state "Форма входа" as state4
+
+
+[*] --> state1
+state1: entry / Открыть страницу входа
+state1: exit / Закрыть страницу входа
+
+state1 --> state2: event: clickLogin \n Form.sendtData(email, password)
+state2: clickLogin / Проверить полученные данные
+state2: isValidData = Form.dataValidation(email, password)
+
+state2 --> state3: isValidData == true
+state3: isValidData / Отправить данные на сервер
+state3: sendDataStatus = Form.sendData(email, password) 
+
+state2 --> state4: isValidData == false
+state4: isValidData == false 
+state4: Form.printStatus('Ошибка', 'Неккоректные данные!')
+state4: Form.printStatus('Ошибка', 'Аккаунт не существует!')
+state4: Form.printStatus('Ок', 'Вход выполнен!')
+state4: exit / Закрыть страницу входа
+state3 -> state4: sendDataStatus == true
+state4 --> [*]
+@enduml

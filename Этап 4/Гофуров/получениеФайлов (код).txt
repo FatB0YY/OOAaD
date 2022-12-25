@@ -1,0 +1,29 @@
+@startuml
+    
+    boundary Disk
+    database Db
+
+  
+    
+
+    mainframe <b>sd</b> Получение файлов
+       
+        
+       
+ activate Disk
+        Disk -> Server: fetchFiles()
+        activate Server
+        Disk -> Server: fetchDirs()
+        Server -> Db: getData()
+        activate Db
+        Db -> Server: data
+        deactivate Db
+        Server -> Disk: data
+        deactivate Server
+        Disk -> Disk: setData()
+      
+    database Db
+
+    
+
+@endum

@@ -1,0 +1,125 @@
+@startuml
+skinparam class {
+  ' задаем зеленый цвет для фона классов, для которых шаблоном является Foo
+  BackgroundColor<<Main>> #FFCC33
+}
+
+class User
+{
+ - id: String
+ - email: String
+ - password: String
+ - diskSpace: Number
+ - usedSpace: Number
+ - avatar: String
+ - isActivated: Boolean
+ - activationLink : String
+}
+
+class File
+{
+ - id: String
+ - name: String
+ - size: Number
+ - creationDate: Date
+ - path: String
+ - accessLink: String
+ - dir_id: Dir
+}
+
+class Token
+{
+ -refreshToken: String
+ -user_id: User
+ 
+ + generateTokens()
+ + saveToken(userId: String, refreshToken: Token)
+ + removeToken(refreshToken: Token)
+ + findToken(refreshToken: Token)
+ + refresh()
+ + validateAccessToken(token: Token)
+ + validateRefreshToken(token: Token)
+}
+
+class Dir
+{
+ - id: String
+ - name: String
+ - accessLink: String
+ - size: Number
+ - creationDate: Date
+ - path: String
+ - accessLink: String
+ - user_id: User
+ - parent_id: Dir
+ - childs_id: [File],
+}
+
+class Profile
+{
+ + fetchDataUser(id: String)
+ + changeEmail(id: String, newEmail: String, password: String)
+ + changePassword(id: String, newPassword: String, oldPassword: String)
+ + activateAccount(link: String)
+}
+
+class Disk
+{
+ + fecthFiles(idUser: String)
+ + fetchDirs(idUser: String)
+ + renameDir(newName: String)
+ + removeFile()
+ + removeDIr()
+ + downloadFile()
+ + addFile(file: File)
+ + addDir(dir: Dir)
+}
+
+class Form
+{
+  - isValidData: Boolean
+  - isEmailFree: Boolean
+  - sendDataStatus: Boolean
+  - email: String
+  - password: String
+
+  + sendData(email: String, password: String)
+  + dataValidation(email: String, password: String)
+  + checkEmail(email: String)
+  + setData(email: String, password: String)
+  + printStatus(title: String, msg: String)
+}
+
+class Server
+{
+ - file_id: File
+ - files_id: [File]
+ - dir_id: Dir
+ - dirs_id: [Dir]
+
+ + getData()
+ + uploadFile(file: File, user: User)
+ + downloadFile(file: File)
+ + removeFile(file: File)
+
+ + createDir(dir: Dir)
+ + removeDir(dir: Dir)
+ + renameDir(dir: Dir)
+
+ + registration(email: String, password: String)
+ + login(email: String, password: String)
+ + logout()
+ + activate(link: String)
+ + refresh(token: Token) 
+}
+
+Server .. File
+Server .. Dir
+Server .. User
+Disk .. Server
+Profile .. Server
+Form .. Server
+
+User *.. Token
+
+@enduml

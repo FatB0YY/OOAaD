@@ -1,0 +1,32 @@
+@startuml
+    actor Пользователь
+    boundary Disk
+    database Db
+
+    title Удаление файла
+
+    Пользователь -> Disk: Выбор файла на компьютере
+
+        activate Disk
+        
+        Disk -> Server: removeFile()
+        activate Server 
+        Server -> Server: removeFile()
+
+        Server -> Db: removeFile()
+        activate Db
+        Db -> Server: result: успех
+        Server -> Disk: result: успех
+        Disk -> Server: fetchFiles()
+        Disk -> Server: fetchDirs()
+        Server -> Db: getData()
+        Db -> Server: data
+        Disk <- Server: data
+        deactivate Disk
+        deactivate Server
+        deactivate Db
+    database Db
+@endum
+
+  Server -> Db: getData()
+        Db -> Server: data

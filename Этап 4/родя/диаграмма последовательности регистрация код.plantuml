@@ -1,0 +1,62 @@
+@startuml
+
+    database Db
+    actor Пользователь
+    boundary Form
+
+    mainframe <b>sd</b> Регистрация Пользователя
+        Пользователь -> Form
+
+        loop (1, 3) result == false
+            Пользователь -> Form: Ввод данных (email, password)
+            activate Пользователь
+
+            activate Form
+            Form -> Form: dataValidation()
+
+
+            alt данные валидны
+    
+                    Form -> Server: checkEmail()
+                        activate Server
+
+                    alt Аккаунта нет
+                                Server -> Form: result = true
+                Form -> Server: sendData()
+
+            
+        
+                Server -> Db: registration()
+
+                activate Db
+                Db -> Server: result = true
+                  deactivate Db
+      
+                Server -> Form: result = true
+                Form -> Пользователь: printStatus(true)
+                    else Аккаунт сущ
+                        Server -> Form: result = false
+                        Form -> Пользователь: printStatus(error)
+                    end
+              
+
+    
+            
+
+            else данные не валидны
+ 
+                Form -> Пользователь: printStatus(error)
+                            deactivate Server
+            deactivate Form
+            deactivate Пользователь
+            end
+
+
+            
+
+
+        end
+
+    database Db
+
+@endum

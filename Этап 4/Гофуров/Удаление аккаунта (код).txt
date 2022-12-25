@@ -1,0 +1,42 @@
+@startuml
+    actor Пользователь
+    boundary Disk
+    database Db
+
+    title Удаление аккаунта
+
+    Пользователь -> Disk: Удалить аккаунт
+      activate Disk   
+       Disk -> Server: deleteAccount()
+      activate Server 
+    
+    Server -> Server: actionConfirm()
+     Server-> Db: actionConfirm()
+      activate Db   
+
+      alt пароли совпадают
+        Db -> Server: result = true
+        Server -> Db: removeDir()
+        
+        alt аккаунт удален 
+            Db -> Server: result = true
+            Server -> Disk: аккаунт успешно удален
+        else ошибка 
+            Db -> Server: result = false
+            Server -> Disk: ошибка удаления аккаунта
+        end
+
+      else пароли не совпадают
+        Db -> Server: result = false
+        Server -> Disk: вывод ошибки
+
+        deactivate Disk
+        deactivate Server
+         deactivate Db
+      end
+
+    database Db
+@endum
+
+  Server -> Db: getData()
+Db -> Server: data

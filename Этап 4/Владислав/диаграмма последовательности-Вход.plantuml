@@ -1,0 +1,39 @@
+@startuml 
+
+    title Вход
+
+    actor Пользователь
+    boundary Form
+   
+
+        Пользователь -> Form: Ввод данных (email, password)
+
+    activate Пользователь 
+    activate Form 
+
+    Form->Form: dataValidation()
+    alt валидный
+        Form->Server: sendData()
+        activate Server
+        database Db
+        Server->Db:login()
+        activate Db
+        Server->Db:refresh()
+        alt аккаунт существует
+            Server <-- Db: result: успех
+            Form <-- Server: result: успех
+            Пользователь <-- Form: printStatus(ок, вход выполнен!)
+        else аккаунт не существует
+            Server <-- Db: result: ошибка
+            Form <-- Server: result: ошибка
+            deactivate Server
+            deactivate Db
+            Пользователь <-- Form: printStatus(ошибка, аккаунт не существует!)
+        end
+    else невалидный
+        Пользователь <-- Form: printStatus(ошибка, некорректные данные!)
+        deactivate Form
+        deactivate Пользователь
+    end
+    
+@enduml

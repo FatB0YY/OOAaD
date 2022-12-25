@@ -1,0 +1,38 @@
+@startuml
+    actor Пользователь
+    boundary Disk
+    database Db
+
+    Пользователь -> Disk: Выбор файла на компьютере
+    
+
+    mainframe <b>sd</b> Загрузка файлов
+        activate Disk
+        Disk -> Server: addFile()
+
+        activate Server
+        Server -> Server: uploadFile()
+        alt файла не существует
+            Server -> Server: true
+            alt достаточно места на диске
+                Server -> Db: uploadFile()
+                activate Db
+                Db -> Server: успех
+                deactivate Db
+            else недостаточно места на диске
+                Server -> Server: false
+            end
+        else файла существует
+            Server -> Server: false
+        end
+
+        Server -> Disk: ошибка (файл существует)
+        Server -> Disk: ошибка (недостаточно места на диске)
+
+        Disk -> Server: получение файлов (другая диаграмма уже)
+
+    database Db
+
+    
+
+@endum

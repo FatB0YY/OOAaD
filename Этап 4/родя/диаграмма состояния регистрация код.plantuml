@@ -1,0 +1,40 @@
+@startuml
+state "Ввод данных" as state1
+state "Проверка данных" as state2
+state "Поиск сущ аккаунта" as state3
+state "Отправка данных на сервер" as state4
+state "Форма регистрации" as state5
+
+[*] --> state1
+state1: entry / Открыть страницу регистрации
+state1: exit / Закрыть страницу регистрации
+
+state1 --> state2: event: clickRegister \n Form.setData(email, password)
+state2: clickRegister / Проверить полученные данные 
+state2: isValidData = Form.dataValidation(email, password)
+state2 --> state5: isValidData == false
+
+state2 --> state3: isValidData == true
+state3: entry / Проверить email
+state3: isEmailFree = Form.checkEmail(email)
+state3 --> state5: isEmailFree == false [3 попытки]
+
+state3 --> state4: isEmailFree == true
+state4: isValidData isEmailFree / Отправить данные на сервер
+state4: sendDataStatus = Form.sendData(email, password) \n
+
+state4 -> state5: sendDataStatus == true
+state5: isValidData == false / Вывести сообщение о неккоректных данных
+state5: Form.printStatus('Регистрация пользователя', 'Неккоректный email или password') \n
+state5: isEmailFree == false / Вывести сообщение об ошибке
+state5: Form.printStatus('Регистрация пользователя', 'Email занят') \n
+state5: isValidData == true AND isEmailFree == true AND sendDataStatus == true \n   / Вывести сообщение об успешной регистрации 
+state5: Form.printStatus('Регистрация пользователя', 'Аккаунт успешно создан!') \n
+state5: exit / Закрыть страницу регистрации
+
+state5 --> [*]
+
+
+
+@enduml
+
